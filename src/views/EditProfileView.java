@@ -40,35 +40,44 @@ public class EditProfileView {
         grid.setHgap(10);
         grid.setAlignment(Pos.CENTER);
 
+        // 1. Full Name
         TextField txtName = new TextField(currentUser.getName());
         txtName.setPromptText("Full Name");
         txtName.setPrefWidth(250);
 
+        // 2. Email (Read Only - usually identity shouldn't change easily, or allow if requirement says so)
         TextField txtEmail = new TextField(currentUser.getEmail());
-        txtEmail.setDisable(true); 
+        txtEmail.setDisable(true); // Disable email edit for consistency
+        txtEmail.setStyle("-fx-opacity: 0.8; -fx-background-color: #e0e0e0;");
 
+        // 3. Password (Editable)
         PasswordField txtPass = new PasswordField();
         txtPass.setText(currentUser.getPassword());
-        txtPass.setPromptText("Password");
+        txtPass.setPromptText("Password (min 6 chars)");
 
+        // 4. Phone
         TextField txtPhone = new TextField(currentUser.getPhone());
         txtPhone.setPromptText("Phone Number");
 
+        // 5. Address
         TextArea txtAddress = new TextArea(currentUser.getAddress());
         txtAddress.setPrefHeight(60);
         txtAddress.setPrefWidth(250);
         txtAddress.setWrapText(true);
 
+        // 6. Gender (Read Only)
         TextField txtGender = new TextField(currentUser.getGender());
         txtGender.setDisable(true); 
         txtGender.setStyle("-fx-opacity: 0.8; -fx-background-color: #e0e0e0;");
 
         grid.add(new Label("Full Name:"), 0, 0);   grid.add(txtName, 1, 0);
         grid.add(new Label("Email:"), 0, 1);       grid.add(txtEmail, 1, 1);
-        grid.add(new Label("Phone:"), 0, 2);       grid.add(txtPhone, 1, 2);
-        grid.add(new Label("Address:"), 0, 3);     grid.add(txtAddress, 1, 3);
-        grid.add(new Label("Gender:"), 0, 4);      grid.add(txtGender, 1, 4); 
+        grid.add(new Label("Password:"), 0, 2);    grid.add(txtPass, 1, 2);
+        grid.add(new Label("Phone:"), 0, 3);       grid.add(txtPhone, 1, 3);
+        grid.add(new Label("Address:"), 0, 4);     grid.add(txtAddress, 1, 4);
+        grid.add(new Label("Gender:"), 0, 5);      grid.add(txtGender, 1, 5); 
 
+        // 7. Courier Specific Fields
         VBox courierPane = new VBox(10);
         courierPane.setAlignment(Pos.CENTER);
         courierPane.setStyle("-fx-border-color: #ddd; -fx-border-radius: 5; -fx-padding: 15; -fx-background-color: #f9f9f9;");
@@ -98,6 +107,7 @@ public class EditProfileView {
             courierPane.setManaged(false);
         }
         
+        // Buttons
         HBox buttonBox = new HBox(15);
         buttonBox.setAlignment(Pos.CENTER);
 
@@ -111,14 +121,17 @@ public class EditProfileView {
 
         buttonBox.getChildren().addAll(btnBack, btnUpdate);
 
+        // Actions
         btnUpdate.setOnAction(e -> {
             String vType = (currentUser instanceof Courier) ? txtVehicleType.getText() : null;
             String vPlate = (currentUser instanceof Courier) ? txtVehiclePlate.getText() : null;
 
+            // Panggil Controller dengan Parameter Lengkap (termasuk Password)
             String result = userHandler.editProfile(
                 currentUser.getId(), 
                 txtName.getText(),
-                txtEmail.getText(),     
+                txtEmail.getText(), 
+                txtPass.getText(), // Kirim Password baru
                 txtPhone.getText(),
                 txtAddress.getText(),
                 currentUser.getGender(), 
@@ -128,6 +141,8 @@ public class EditProfileView {
 
             if (result.equals("Success")) {
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Profile Updated Successfully!");
+                
+                // Update Local Object agar Dashboard langsung berubah tanpa login ulang
                 currentUser.setName(txtName.getText());
                 currentUser.setPassword(txtPass.getText());
                 currentUser.setPhone(txtPhone.getText());

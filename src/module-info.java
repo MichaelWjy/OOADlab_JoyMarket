@@ -1,0 +1,6 @@
+module CaseOOAD {
+	opens main;
+	requires java.sql;
+	requires javafx.graphics;
+	requires javafx.controls;
+}

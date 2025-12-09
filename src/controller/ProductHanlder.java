@@ -12,7 +12,6 @@ import utils.Connect;
 public class ProductHanlder {
     private Connect con = Connect.getInstance();
 
-    // Mengambil semua produk untuk ditampilkan di Shop
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
         String query = "SELECT * FROM products";
@@ -33,7 +32,6 @@ public class ProductHanlder {
         return products;
     }
 
-    // Mengambil 1 produk spesifik (untuk validasi stock saat add to cart)
     public Product getProduct(String idProduct) {
         String query = "SELECT * FROM products WHERE idProduct = ?";
         try {
@@ -55,8 +53,6 @@ public class ProductHanlder {
         return null;
     }
 
-    // Admin Feature: Edit Stock
-    // Validasi: Stock tidak boleh negatif (dilakukan di View/Controller sebelum panggil ini, atau di sini)
     public String updateStock(String idProduct, int newStock) {
         if (newStock < 0) return "Stock cannot be negative";
 

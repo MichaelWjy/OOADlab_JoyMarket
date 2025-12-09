@@ -147,9 +147,8 @@ public class UserHandler {
     }
     
     public String editProfile(String idUser, String name, String email, String password, String phone, String address, String gender, String vehicleType, String vehiclePlate) {
-        // Validasi
         if (name.isEmpty()) return "Name cannot be empty";
-        if (password.isEmpty() || password.length() < 6) return "Password invalid (min 6 chars)"; // Added password validation
+        if (password.isEmpty() || password.length() < 6) return "Password invalid (min 6 chars)";
         if (!isNumeric(phone) || phone.length() < 10 || phone.length() > 13) return "Phone invalid (10-13 digits)";
         if (address.isEmpty()) return "Address cannot be empty";
 
@@ -170,8 +169,7 @@ public class UserHandler {
                 if(vehicleType == null || vehicleType.isEmpty()) return "Vehicle Type cannot be empty";
                 if(vehiclePlate == null || vehiclePlate.isEmpty()) return "Vehicle Plate cannot be empty";
             }
-         
-            // Update User Data
+        
             String updateUsers = "UPDATE users SET fullName = ?, email = ?, password = ?, phone = ?, address = ?, gender = ? WHERE idUser = ?";
             PreparedStatement psUser = con.prepareStatement(updateUsers);
             psUser.setString(1, name);

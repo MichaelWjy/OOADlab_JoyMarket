@@ -44,7 +44,6 @@ public class RegisterView {
         txtAddress.setPrefHeight(60);
         txtAddress.setPrefWidth(200);
 
-        // --- NEW: GENDER SELECTION ---
         Label lblGender = new Label("Gender:");
         ToggleGroup genderGroup = new ToggleGroup();
         RadioButton rbMale = new RadioButton("Male");
@@ -53,17 +52,13 @@ public class RegisterView {
         rbFemale.setToggleGroup(genderGroup);
         
         HBox genderBox = new HBox(10, rbMale, rbFemale);
-        // -----------------------------
-
-        // Grid Positioning
         grid.add(new Label("Full Name:"), 0, 0);   grid.add(txtName, 1, 0);
         grid.add(new Label("Email:"), 0, 1);       grid.add(txtEmail, 1, 1);
         grid.add(new Label("Password:"), 0, 2);    grid.add(txtPass, 1, 2);
         grid.add(new Label("Phone:"), 0, 3);       grid.add(txtPhone, 1, 3);
         grid.add(new Label("Address:"), 0, 4);     grid.add(txtAddress, 1, 4);
-        grid.add(lblGender, 0, 5);                 grid.add(genderBox, 1, 5); // Add Gender
+        grid.add(lblGender, 0, 5);                 grid.add(genderBox, 1, 5);
 
-        // Role Selection
         HBox roleBox = new HBox(15);
         Label lblRole = new Label("Register as:");
         ToggleGroup roleGroup = new ToggleGroup();
@@ -74,9 +69,7 @@ public class RegisterView {
         rbCourier.setToggleGroup(roleGroup);
         roleBox.getChildren().addAll(lblRole, rbCustomer, rbCourier);
         
-        grid.add(roleBox, 0, 6, 2, 1); // Geser ke baris 6
-
-        // Courier Panel (Hidden)
+        grid.add(roleBox, 0, 6, 2, 1);
         VBox courierPane = new VBox(10);
         courierPane.setAlignment(Pos.CENTER);
         courierPane.setStyle("-fx-border-color: #ccc; -fx-padding: 10; -fx-background-color: #f9f9f9;");
@@ -104,20 +97,16 @@ public class RegisterView {
             String selectedRole = rbCourier.isSelected() ? "Courier" : "Customer";
             String vType = rbCourier.isSelected() ? txtVehicleType.getText() : "";
             String vPlate = rbCourier.isSelected() ? txtPlate.getText() : "";
-            
-            // AMBIL GENDER
             String selectedGender = null;
             if (rbMale.isSelected()) selectedGender = "Male";
             else if (rbFemale.isSelected()) selectedGender = "Female";
-
-            // Panggil Controller (Pastikan urutan parameter sesuai UserHandler)
             String result = userHandler.registerAccount(
                 txtName.getText(),
                 txtEmail.getText(),
                 txtPass.getText(),
                 txtPhone.getText(),
                 txtAddress.getText(),
-                selectedGender, // Kirim Gender
+                selectedGender,
                 selectedRole,
                 vType,
                 vPlate

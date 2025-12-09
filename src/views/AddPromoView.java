@@ -38,8 +38,6 @@ public class AddPromoView {
         grid.setVgap(15);
         grid.setHgap(10);
         grid.setAlignment(Pos.CENTER);
-
-        // Inputs
         TextField txtCode = new TextField();
         txtCode.setPromptText("e.g., SALE10");
         
@@ -53,7 +51,6 @@ public class AddPromoView {
         grid.add(new Label("Headline:"), 0, 1);     grid.add(txtHeadline, 1, 1);
         grid.add(new Label("Discount (%):"), 0, 2); grid.add(txtDiscount, 1, 2);
 
-        // Buttons
         HBox buttonBox = new HBox(15);
         buttonBox.setAlignment(Pos.CENTER);
 
@@ -65,13 +62,11 @@ public class AddPromoView {
 
         buttonBox.getChildren().addAll(btnBack, btnSave);
 
-        // Actions
         btnSave.setOnAction(e -> {
             String code = txtCode.getText();
             String headline = txtHeadline.getText();
             String discountStr = txtDiscount.getText();
 
-            // Validasi Numeric
             if (!isNumeric(discountStr)) {
                 showAlert(Alert.AlertType.ERROR, "Invalid Input", "Discount must be a number.");
                 return;

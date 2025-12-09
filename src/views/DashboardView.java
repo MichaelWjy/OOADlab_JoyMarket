@@ -33,17 +33,7 @@ public class DashboardView {
     }
 
     public void show() {
-        // REFRESH USER DATA (Penting agar Balance selalu update setelah TopUp/Transaksi)
-        User refreshedUser = userHandler.getUser(currentUser.getId());
-        if (refreshedUser != null) {
-            this.currentUser = refreshedUser;
-        }
-        
         BorderPane root = new BorderPane();
-
-        // ==========================================
-        // 1. HEADER (Welcome & Logout)
-        // ==========================================
         HBox header = new HBox(20);
         header.setPadding(new Insets(15, 20, 15, 20));
         header.setStyle("-fx-background-color: #f4f4f4; -fx-border-color: #cccccc; -fx-border-width: 0 0 1 0;");
@@ -75,9 +65,6 @@ public class DashboardView {
         header.getChildren().addAll(welcomeBox, spacer, btnLogout);
         root.setTop(header);
 
-        // ==========================================
-        // 2. CENTER (Menu Grid based on Use Case)
-        // ==========================================
         VBox centerBox = new VBox(25);
         centerBox.setPadding(new Insets(30));
         centerBox.setAlignment(Pos.CENTER);
@@ -90,65 +77,55 @@ public class DashboardView {
         menuGrid.setVgap(20);
         menuGrid.setAlignment(Pos.CENTER);
 
-        // --- LOGIC MENU DINAMIS BERDASARKAN ROLE ---
         
         if (currentUser instanceof Customer) {
-            // 1. Shop (Product List)
             Button btnShop = createMenuButton("Shop Products", "Browse & Add to Cart", "#4CAF50");
-//            btnShop.setOnAction(e -> new ProductListView(stage, currentUser).show());
+            btnShop.setOnAction(e -> new ProductListView(stage, currentUser).show());
             menuGrid.add(btnShop, 0, 0);
-            
-            // 2. Cart
+     
             Button btnCart = createMenuButton("My Cart", "Checkout & Place Order", "#2196F3");
             btnCart.setOnAction(e -> new CartView(stage, currentUser).show());
             menuGrid.add(btnCart, 1, 0);
             
-            // 3. History
             Button btnHistory = createMenuButton("Order History", "Track your orders", "#FF9800");
-//            btnHistory.setOnAction(e -> new OrderHistoryView(stage, currentUser).show());
+            btnHistory.setOnAction(e -> new OrderHistoryView(stage, currentUser).show());
             menuGrid.add(btnHistory, 0, 1);
             
-            // 4. Top Up
             Button btnTopUp = createMenuButton("Top Up Balance", "Add funds to wallet", "#9C27B0");
             btnTopUp.setOnAction(e -> new TopUpView(stage, currentUser).show());
             menuGrid.add(btnTopUp, 1, 1);
 
         } else if (currentUser instanceof Admin) {
-            // 1. Manage Products (Edit Stock)
             Button btnManageProd = createMenuButton("Manage Products", "Edit Stock & Details", "#3F51B5");
-//            btnManageProd.setOnAction(e -> new AdminProductView(stage, currentUser).show());
+            btnManageProd.setOnAction(e -> new ProductListView(stage, currentUser).show());
             menuGrid.add(btnManageProd, 0, 0);
             
-            // 2. Manage Orders (Assign Courier)
             Button btnManageOrder = createMenuButton("Manage Orders", "Assign Courier to Order", "#009688");
             btnManageOrder.setOnAction(e -> new AdminOrderView(stage, currentUser).show());
             menuGrid.add(btnManageOrder, 1, 0);
             
-            // 3. View Couriers
+            Button btnAllOrders = createMenuButton("View All Orders", "Check all transactions", "#607D8B");
+            btnAllOrders.setOnAction(e -> new AdminAllOrdersView(stage, currentUser).show());
+            menuGrid.add(btnAllOrders, 1, 1);
+
             Button btnViewCouriers = createMenuButton("View Couriers", "List of all couriers", "#795548");
-            // Optional: Buat View khusus list kurir jika diminta, atau tampilkan alert info
-            btnViewCouriers.setOnAction(e -> showAlert("Info", "Use 'Manage Orders' to see couriers availability.")); 
+            btnViewCouriers.setOnAction(e -> new AdminCourierView(stage, currentUser).show());
             menuGrid.add(btnViewCouriers, 0, 1);
             
             Button btnAddPromo = createMenuButton("Add Promo", "Create New Promo Code", "#E91E63");
             btnAddPromo.setOnAction(e -> new AddPromoView(stage, currentUser).show());
-            menuGrid.add(btnAddPromo, 1, 1);
+            menuGrid.add(btnAddPromo, 0, 2);
 
         } else if (currentUser instanceof Courier) {
-            // 1. Tasks
             Button btnTasks = createMenuButton("My Tasks", "Update Delivery Status", "#673AB7");
-//            btnTasks.setOnAction(e -> new CourierTaskView(stage, currentUser).show());
+            btnTasks.setOnAction(e -> new CourierTaskView(stage, currentUser).show());
             menuGrid.add(btnTasks, 0, 0);
             
-            // 2. History
             Button btnDeliveryHist = createMenuButton("Delivery History", "Completed jobs", "#607D8B");
-//            btnDeliveryHist.setOnAction(e -> new CourierHistoryView(stage, currentUser).show());
+            btnDeliveryHist.setOnAction(e -> new CourierHistoryView(stage, currentUser).show());
             menuGrid.add(btnDeliveryHist, 1, 0);
         }
 
-        // ==========================================
-        // 3. FOOTER (Edit Profile - All Roles)
-        // ==========================================
         Button btnEditProfile = new Button("Edit My Profile");
         btnEditProfile.setMinWidth(250);
         btnEditProfile.setMinHeight(40);

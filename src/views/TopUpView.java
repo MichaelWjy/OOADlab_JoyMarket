@@ -31,19 +31,14 @@ public class TopUpView {
     
     public void show() {
         BorderPane root = new BorderPane();
-        
-        // --- CENTER CONTENT ---
         VBox centerBox = new VBox(20);
         centerBox.setPadding(new Insets(30));
         centerBox.setAlignment(Pos.CENTER);
         centerBox.setStyle("-fx-background-color: #fcfcfc;");
-
-        // 1. Judul
         Label lblTitle = new Label("Top Up Balance");
         lblTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         lblTitle.setStyle("-fx-text-fill: #333;");
 
-        // 2. Info Saldo Saat Ini
         double currentBal = 0.0;
         if (currentUser instanceof Customer) {
             currentBal = ((Customer) currentUser).getBalance();
@@ -52,9 +47,7 @@ public class TopUpView {
         Label lblCurrent = new Label("Current Balance:");
         Label lblBalanceVal = new Label("Rp " + String.format("%.2f", currentBal));
         lblBalanceVal.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        lblBalanceVal.setStyle("-fx-text-fill: #2E7D32;"); // Warna Hijau
-
-        // 3. Form Input
+        lblBalanceVal.setStyle("-fx-text-fill: #2E7D32;"); 
         GridPane grid = new GridPane();
         grid.setVgap(15);
         grid.setHgap(10);
@@ -68,7 +61,6 @@ public class TopUpView {
         grid.add(lblAmount, 0, 0);
         grid.add(txtAmount, 1, 0);
 
-        // 4. Buttons
         HBox buttonBox = new HBox(15);
         buttonBox.setAlignment(Pos.CENTER);
 
@@ -79,40 +71,25 @@ public class TopUpView {
         btnBack.setStyle("-fx-background-color: #ccc; -fx-text-fill: black; -fx-cursor: hand;");
 
         buttonBox.getChildren().addAll(btnBack, btnProcess);
-
-        // --- ACTION HANDLERS ---
-
         btnProcess.setOnAction(e -> {
             String amountStr = txtAmount.getText();
-
-            // Validasi: Harus Angka
             if (!isNumeric(amountStr)) {
                 showAlert(Alert.AlertType.ERROR, "Invalid Input", "Amount must be a numeric value.");
                 return;
             }
-
             double amount = Double.parseDouble(amountStr);
-
-            // Validasi: Minimal 10.000 
             if (amount < 10000) {
                 showAlert(Alert.AlertType.ERROR, "Invalid Amount", "Minimum top up amount is Rp 10,000.");
                 return;
             }
-
-            // Panggil Controller
-            // Note: Pastikan method topUpBalance sudah ada di UserHandler (lihat di bawah)
             boolean success = userHandler.topUpBalance(currentUser.getId(), amount);
 
             if (success) {
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Top Up Successful!");
-                
-                // UPDATE MODEL LOKAL (Agar Dashboard langsung berubah tanpa login ulang)
                 if (currentUser instanceof Customer) {
                     Customer c = (Customer) currentUser;
                     c.setBalance(c.getBalance() + amount);
                 }
-
-                // Kembali ke Dashboard
                 new DashboardView(stage, currentUser).show();
             } else {
                 showAlert(Alert.AlertType.ERROR, "Failed", "Transaction Failed. Please try again.");
@@ -122,8 +99,6 @@ public class TopUpView {
         btnBack.setOnAction(e -> {
             new DashboardView(stage, currentUser).show();
         });
-
-        // Assemble Layout
         centerBox.getChildren().addAll(lblTitle, lblCurrent, lblBalanceVal, grid, buttonBox);
         root.setCenter(centerBox);
 
@@ -133,7 +108,6 @@ public class TopUpView {
         stage.show();
     }
 
-    // Helper: Cek Numeric tanpa Regex (Sesuai ketentuan soal [cite: 91])
     private boolean isNumeric(String str) {
         if (str == null || str.isEmpty()) return false;
         try {

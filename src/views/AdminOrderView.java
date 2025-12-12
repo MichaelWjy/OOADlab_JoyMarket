@@ -3,14 +3,15 @@ package views;
 import controller.CourierHandler;
 import controller.DeliveryHandler;
 import controller.OrderHandler;
+import entitymodel.Courier;
+import entitymodel.OrderHeader;
+import entitymodel.User;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import models.Courier;
-import models.OrderHeader;
-import models.User;
+
 import java.util.List;
 
 public class AdminOrderView {

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.OrderHeader;
+import entitymodel.OrderHeader;
 import utils.Connect;
 
 public class DeliveryHandler {

@@ -1,14 +1,15 @@
 package views;
 
 import controller.OrderHandler;
+import entitymodel.OrderHeader;
+import entitymodel.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import models.OrderHeader;
-import models.User;
+
 import java.util.List;
 
 public class AdminAllOrdersView {

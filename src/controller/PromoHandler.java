@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.Promo;
+import entitymodel.Promo;
 import utils.Connect;
 
 public class PromoHandler {

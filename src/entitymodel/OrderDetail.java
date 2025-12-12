@@ -1,4 +1,4 @@
-package models;
+package entitymodel;
 
 public class OrderDetail {
 	private String idOrder;

@@ -2,16 +2,16 @@ package views;
 
 import controller.CartItemHandler;
 import controller.ProductHanlder;
+import entitymodel.Admin;
+import entitymodel.Customer;
+import entitymodel.Product;
+import entitymodel.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import models.Admin;
-import models.Customer;
-import models.Product;
-import models.User;
 
 public class ProductListView {
     private Stage stage;

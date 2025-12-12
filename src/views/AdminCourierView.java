@@ -1,14 +1,14 @@
 package views;
 
 import controller.CourierHandler;
+import entitymodel.Courier;
+import entitymodel.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import models.Courier;
-import models.User;
 
 public class AdminCourierView {
     private Stage stage;

@@ -7,12 +7,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.CartItem;
-import models.Customer;
-import models.OrderHeader;
-import models.Product;
-import models.Promo;
-import models.User;
+import entitymodel.CartItem;
+import entitymodel.Customer;
+import entitymodel.OrderHeader;
+import entitymodel.Product;
+import entitymodel.Promo;
+import entitymodel.User;
 import utils.Connect;
 
 public class OrderHandler {

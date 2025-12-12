@@ -52,6 +52,7 @@ public class RegisterView {
         rbFemale.setToggleGroup(genderGroup);
         
         HBox genderBox = new HBox(10, rbMale, rbFemale);
+        
         grid.add(new Label("Full Name:"), 0, 0);   grid.add(txtName, 1, 0);
         grid.add(new Label("Email:"), 0, 1);       grid.add(txtEmail, 1, 1);
         grid.add(new Label("Password:"), 0, 2);    grid.add(txtPass, 1, 2);
@@ -59,44 +60,14 @@ public class RegisterView {
         grid.add(new Label("Address:"), 0, 4);     grid.add(txtAddress, 1, 4);
         grid.add(lblGender, 0, 5);                 grid.add(genderBox, 1, 5);
 
-        HBox roleBox = new HBox(15);
-        Label lblRole = new Label("Register as:");
-        ToggleGroup roleGroup = new ToggleGroup();
-        RadioButton rbCustomer = new RadioButton("Customer");
-        rbCustomer.setToggleGroup(roleGroup);
-        rbCustomer.setSelected(true);
-        RadioButton rbCourier = new RadioButton("Courier");
-        rbCourier.setToggleGroup(roleGroup);
-        roleBox.getChildren().addAll(lblRole, rbCustomer, rbCourier);
-        
-        grid.add(roleBox, 0, 6, 2, 1);
-        VBox courierPane = new VBox(10);
-        courierPane.setAlignment(Pos.CENTER);
-        courierPane.setStyle("-fx-border-color: #ccc; -fx-padding: 10; -fx-background-color: #f9f9f9;");
-        
-        TextField txtVehicleType = new TextField(); txtVehicleType.setPromptText("Vehicle Type");
-        TextField txtPlate = new TextField(); txtPlate.setPromptText("Vehicle Plate");
-
-        courierPane.getChildren().addAll(new Label("Vehicle Type:"), txtVehicleType, new Label("Vehicle Plate:"), txtPlate);
-        courierPane.setVisible(false);
-        courierPane.setManaged(false);
-
-        roleGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
-            if (rbCourier.isSelected()) {
-                courierPane.setVisible(true); courierPane.setManaged(true);
-            } else {
-                courierPane.setVisible(false); courierPane.setManaged(false);
-                txtVehicleType.clear(); txtPlate.clear();
-            }
-        });
-
         Button btnRegister = new Button("Register Now");
         Button btnBack = new Button("Back to Login");
 
         btnRegister.setOnAction(e -> {
-            String selectedRole = rbCourier.isSelected() ? "Courier" : "Customer";
-            String vType = rbCourier.isSelected() ? txtVehicleType.getText() : "";
-            String vPlate = rbCourier.isSelected() ? txtPlate.getText() : "";
+            String selectedRole = "Customer";
+            String vType = "";
+            String vPlate = "";
+            
             String selectedGender = null;
             if (rbMale.isSelected()) selectedGender = "Male";
             else if (rbFemale.isSelected()) selectedGender = "Female";
@@ -107,9 +78,7 @@ public class RegisterView {
                 txtPhone.getText(),
                 txtAddress.getText(),
                 selectedGender,
-                selectedRole,
-                vType,
-                vPlate
+                selectedRole
             );
 
             if (result.equals("Success")) {
@@ -121,9 +90,9 @@ public class RegisterView {
         });
 
         btnBack.setOnAction(e -> new LoginView(stage).show());
-
-        root.getChildren().addAll(lblTitle, grid, courierPane, btnRegister, btnBack);
-        stage.setScene(new Scene(root, 500, 700));
+        root.getChildren().addAll(lblTitle, grid, btnRegister, btnBack);
+        
+        stage.setScene(new Scene(root, 500, 600));
         stage.setTitle("JoyMarket - Register");
         stage.show();
     }

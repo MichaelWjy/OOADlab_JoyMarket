@@ -1,6 +1,8 @@
 package views;
 
 import controller.UserHandler;
+import entitymodel.Customer;
+import entitymodel.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -15,8 +17,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import models.Customer;
-import models.User;
 
 public class TopUpView {
     private Stage stage;

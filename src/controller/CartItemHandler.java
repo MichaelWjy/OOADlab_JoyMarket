@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.CartItem;
-import models.Product;
+import entitymodel.CartItem;
+import entitymodel.Product;
 import utils.Connect;
 
 public class CartItemHandler {

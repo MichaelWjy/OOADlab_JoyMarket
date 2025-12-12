@@ -4,6 +4,10 @@ import controller.CartItemHandler;
 import controller.OrderHandler;
 import controller.ProductHanlder;
 import controller.PromoHandler;
+import entitymodel.CartItem;
+import entitymodel.Product;
+import entitymodel.Promo;
+import entitymodel.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,10 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import models.CartItem;
-import models.Product;
-import models.Promo;
-import models.User;
+
 import java.util.List;
 
 public class CartView {

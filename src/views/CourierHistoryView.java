@@ -1,6 +1,8 @@
 package views;
 
 import controller.DeliveryHandler;
+import entitymodel.OrderHeader;
+import entitymodel.User;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -8,8 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import models.OrderHeader;
-import models.User;
+
 import java.util.List;
 
 public class CourierHistoryView {

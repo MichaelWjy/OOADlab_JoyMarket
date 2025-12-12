@@ -5,10 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import models.Admin;
-import models.Courier;
-import models.Customer;
-import models.User;
+import entitymodel.Admin;
+import entitymodel.Courier;
+import entitymodel.Customer;
+import entitymodel.User;
 import utils.Connect;
 
 public class UserHandler {
@@ -65,18 +65,13 @@ public class UserHandler {
         return user;
     }
     
-    public String registerAccount(String name, String email, String pass, String phone, String address, String gender, String role, String vehicleType, String vehiclePlate) {
+    public String registerAccount(String name, String email, String pass, String phone, String address, String gender, String role) {
         if (name.isEmpty()) return "Name Cannot be empty";
         if (!email.endsWith("@gmail.com")) return "Email must end with @gmail.com";
         if (pass.length() < 6) return "Password min 6 characters";
         if (!isNumeric(phone) || phone.length() < 10 || phone.length() > 13) return "Phone invalid (10-13 digits)";
         if (address.isEmpty()) return "Address must be filled";
         if (gender == null || gender.isEmpty()) return "Gender must be selected";
-        
-        if (role.equalsIgnoreCase("Courier")) {
-            if (vehicleType == null || vehicleType.isEmpty()) return "Vehicle Type required for Courier";
-            if (vehiclePlate == null || vehiclePlate.isEmpty()) return "Vehicle Plate required for Courier";
-        }
         
         try {
             String check = "SELECT idUser FROM users WHERE email = ?";
@@ -109,14 +104,7 @@ public class UserHandler {
                 psCust.setInt(1, newId);
                 psCust.executeUpdate();
                 
-            } else if (role.equalsIgnoreCase("Courier")) {
-                String queryCourier = "INSERT INTO couriers (idUser, vehicleType, vehiclePlate) VALUES (?, ?, ?)";
-                PreparedStatement psCourier = con.prepareStatement(queryCourier);
-                psCourier.setInt(1, newId);
-                psCourier.setString(2, vehicleType);
-                psCourier.setString(3, vehiclePlate);
-                psCourier.executeUpdate();
-            }
+            } 
 
             return "Success";
             
@@ -169,7 +157,7 @@ public class UserHandler {
                 if(vehicleType == null || vehicleType.isEmpty()) return "Vehicle Type cannot be empty";
                 if(vehiclePlate == null || vehiclePlate.isEmpty()) return "Vehicle Plate cannot be empty";
             }
-        
+         
             String updateUsers = "UPDATE users SET fullName = ?, email = ?, password = ?, phone = ?, address = ?, gender = ? WHERE idUser = ?";
             PreparedStatement psUser = con.prepareStatement(updateUsers);
             psUser.setString(1, name);

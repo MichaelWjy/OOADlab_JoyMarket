@@ -1,36 +1,33 @@
 package controller;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
-
 import entitymodel.CartItem;
 import entitymodel.Customer;
 import entitymodel.OrderHeader;
 import entitymodel.Product;
 import entitymodel.Promo;
 import entitymodel.User;
-import utils.Connect;
+import model.CartItemModel;
+import model.OrderModel;
+import model.ProductModel;
+import model.PromoModel;
 
 public class OrderHandler {
-    private Connect con = Connect.getInstance();
-    private CartItemHandler cartHandler = new CartItemHandler();
-    private ProductHanlder productHandler = new ProductHanlder();
-    private PromoHandler promoHandler = new PromoHandler();
+    private CartItemModel cartModel = new CartItemModel();
+    private ProductModel productModel = new ProductModel();
+    private PromoModel promoModel = new PromoModel();
+    private OrderModel orderModel = new OrderModel();
 
     public String checkout(User user, String promoCode) {
         if (!(user instanceof Customer)) return "Only customers can order";
         Customer customer = (Customer) user;
 
-        List<CartItem> cart = cartHandler.getUserCart(customer.getId());
+        List<CartItem> cart = cartModel.getUserCart(customer.getId());
         if (cart.isEmpty()) return "Cart is empty";
 
         double totalPrice = 0;
         for (CartItem item : cart) {
-            Product p = productHandler.getProduct(item.getIdProduct());
+            Product p = productModel.getProduct(item.getIdProduct());
             if (p.getStock() < item.getCount()) {
                 return "Stock changed for product: " + p.getName();
             }
@@ -39,7 +36,7 @@ public class OrderHandler {
 
         String idPromo = null; 
         if (promoCode != null && !promoCode.isEmpty()) {
-            Promo promo = promoHandler.getPromoByCode(promoCode);
+            Promo promo = promoModel.getPromoByCode(promoCode);
             if (promo == null) return "Invalid Promo Code";
             
             double discount = totalPrice * (promo.getDiscountPercentage() / 100);
@@ -51,117 +48,26 @@ public class OrderHandler {
             return "Insufficient Balance. Total: " + totalPrice;
         }
 
-        try {
-            String headerQuery = "INSERT INTO order_headers (idCustomer, idPromo, status, orderedAt, totalAmount) VALUES (?, ?, 'Pending', NOW(), ?)";
-            PreparedStatement psHeader = con.prepareStatement(headerQuery);
-            psHeader.setInt(1, Integer.parseInt(customer.getId()));
-            
-            if (idPromo == null) psHeader.setNull(2, java.sql.Types.INTEGER);
-            else psHeader.setInt(2, Integer.parseInt(idPromo));
-            
-            psHeader.setDouble(3, totalPrice);
-            psHeader.executeUpdate();
-
-            ResultSet rsKey = psHeader.getGeneratedKeys();
-            int orderId = 0;
-            if (rsKey.next()) orderId = rsKey.getInt(1);
-            else return "Failed to create order";
-
-            String detailQuery = "INSERT INTO order_details (idOrder, idProduct, qty) VALUES (?, ?, ?)";
-            PreparedStatement psDetail = con.prepareStatement(detailQuery);
-            
-            String stockQuery = "UPDATE products SET stock = stock - ? WHERE idProduct = ?";
-            PreparedStatement psStock = con.prepareStatement(stockQuery);
-
-            for (CartItem item : cart) {
-                psDetail.setInt(1, orderId);
-                psDetail.setInt(2, Integer.parseInt(item.getIdProduct()));
-                psDetail.setInt(3, item.getCount());
-                psDetail.executeUpdate();
-                psStock.setInt(1, item.getCount());
-                psStock.setInt(2, Integer.parseInt(item.getIdProduct()));
-                psStock.executeUpdate();
-            }
-
-            String balanceQuery = "UPDATE customers SET balance = balance - ? WHERE idUser = ?";
-            PreparedStatement psBal = con.prepareStatement(balanceQuery);
-            psBal.setDouble(1, totalPrice);
-            psBal.setInt(2, Integer.parseInt(customer.getId()));
-            psBal.executeUpdate();
-            
+        boolean success = orderModel.createOrder(customer.getId(), idPromo, totalPrice, cart);
+        
+        if (success) {
             customer.setBalance(customer.getBalance() - totalPrice);
-            cartHandler.clearCart(customer.getId());
-
+            cartModel.clearCart(customer.getId());
             return "Success";
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "Transaction Failed: " + e.getMessage();
+        } else {
+            return "Transaction Failed";
         }
     }
 
     public List<OrderHeader> getPendingOrders() {
-        List<OrderHeader> orders = new ArrayList<>();
-        String query = "SELECT * FROM order_headers WHERE status = 'Pending'";
-        try {
-            ResultSet rs = con.execQuery(query);
-            while(rs.next()){
-                orders.add(new OrderHeader(
-                    String.valueOf(rs.getInt("idOrder")),
-                    String.valueOf(rs.getInt("idCustomer")),
-                    rs.getString("idPromo"),
-                    rs.getString("status"),
-                    rs.getTimestamp("orderedAt"),
-                    rs.getDouble("totalAmount")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return orders;
+        return orderModel.getOrdersByStatus("Pending");
     }
     
     public List<OrderHeader> getOrderHistory(String idCustomer) {
-        List<OrderHeader> orders = new ArrayList<>();
-        String query = "SELECT * FROM order_headers WHERE idCustomer = ? ORDER BY orderedAt DESC";
-        try {
-            PreparedStatement ps = con.prepareStatement(query);
-            ps.setInt(1, Integer.parseInt(idCustomer));
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()){
-                orders.add(new OrderHeader(
-                    String.valueOf(rs.getInt("idOrder")),
-                    String.valueOf(rs.getInt("idCustomer")),
-                    rs.getString("idPromo"),
-                    rs.getString("status"),
-                    rs.getTimestamp("orderedAt"),
-                    rs.getDouble("totalAmount")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return orders;
+        return orderModel.getOrderHistory(idCustomer);
     }
     
     public List<OrderHeader> getAllOrders() {
-        List<OrderHeader> orders = new ArrayList<>();
-        String query = "SELECT * FROM order_headers ORDER BY orderedAt DESC";
-        try {
-            ResultSet rs = con.execQuery(query);
-            while(rs.next()){
-                orders.add(new OrderHeader(
-                    String.valueOf(rs.getInt("idOrder")),
-                    String.valueOf(rs.getInt("idCustomer")),
-                    rs.getString("idPromo"),
-                    rs.getString("status"),
-                    rs.getTimestamp("orderedAt"),
-                    rs.getDouble("totalAmount")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return orders;
+        return orderModel.getAllOrders();
     }
 }
